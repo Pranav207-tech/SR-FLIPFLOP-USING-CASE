@@ -52,51 +52,25 @@ Developed by: Pranav K
 RegisterNumber: 24900545
 ```
 ```
-input clk,    // Clock signal
+SR USING CASE:
+module sr_ff (s, r, clk, rst, q);
+  input s, r, clk, rst;
+  output reg q;
 
-input reset,  // Active-high reset signal
-
-input s,      // Set input
-
-input r,      // Reset input
-
-output reg q, // Output
-
-output reg q_bar // Complement of output);
-
-always @(posedge clk or posedge reset) begin
-
-    if (reset) begin
-    
-        q <= 1'b0;      // Reset the flip-flop
-        
-        q_bar <= 1'b1;  // Complement output
+  always @(posedge clk or posedge rst)
+ begin
+    if (rst)
+      q <= 0; // Reset the flip-flop
+    else
+ begin
+      case ({s, r}) // S and R control the behavior
+        2'b00: q <= q;    // No change
+        2'b01: q <= 0;    // Reset
+        2'b10: q <= 1;    // Set
+        2'b11: q <= 0;    // Invalid state, typically treated as reset
+      endcase
     end
-    
-    
-    else begin
-    
-        case ({s, r})
-        
-            2'b00: ;             // No change
-            
-            2'b01: begin         // Reset
-            
-                q <= 1'b0;
-                
-                q_bar <= 1'b1;
-            end
-            
-            
-            2'b10: begin         // Set
-            
-                q <= 1'b1;
-                
-                q_bar <= 1'b0;
-          
-            end
-            
-            2'b11: begin         // I
+  end
 ```
 
 **RTL LOGIC FOR FLIPFLOPS**
